@@ -27,18 +27,24 @@ public class ContoCorrenteRest {
 
 	// http://localhost:8080/Ewallet/rest/conto
 
-
+	// metodo che inserisci un nuovo conto
 	@POST
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response insertConto(ContoCorrente c) {
-
+		for(ContoCorrente con : conti) {
+			if(con.getIban().equals(c.getIban())) {
+				return Response.status(404).entity("Il conto inserito esiste già").build();
+			}
+		}
 		conti.add(c);
 		return Response.status(200).entity("Crezione del conto avvenuta con successo").build();
+		
 
 	}
 
 
+	// metodo che cancella un conto esistente
 	@DELETE
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -59,7 +65,7 @@ public class ContoCorrenteRest {
 
 	}
 
-
+	// metodo che modifica un conto esistente
 	@PUT
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -82,7 +88,7 @@ public class ContoCorrenteRest {
 
 	}
 
-
+	// metodo che in base all'operazione selezionata come enum effettua l'addizione o sottrazione dal saldo
 	@PUT
 	@Path("/movimento")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -129,7 +135,7 @@ public class ContoCorrenteRest {
 	}
 
 
-
+	// metodo che restituisce la lista di tutti i movimenti
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -138,7 +144,7 @@ public class ContoCorrenteRest {
 		return movimenti;
 
 	}
-
+	// metodo che restituisce la lista di tutti i conti
 	@GET
 	@Path("/tutticonti")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -146,6 +152,22 @@ public class ContoCorrenteRest {
 
 		return conti;
 
+	}
+	// metodo che restituisce una lista di movimenti assegnati ad un determinato conto
+	@GET
+	@Path("/iban")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Movimento> getMovimentiIban(ContoCorrente c) {
+		ArrayList<Movimento> movimentiConto = new ArrayList<>();
+		
+		for(Movimento move : movimenti) {
+			if(move.getIban().equals(c.getIban())) {
+				
+				movimentiConto.add(move);
+			}
+		}
+		
+		return movimentiConto;
 	}
 
 
